@@ -1,35 +1,29 @@
 var builder = WebApplication.CreateBuilder(args);
-
-// Добавление и настройка CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()    // Разрешаем доступ с любых источников
-              .AllowAnyMethod()    // Разрешаем любые методы (GET, POST, PUT, DELETE и т.д.)
-              .AllowAnyHeader();   // Разрешаем любые заголовки
-    });
-});
-
+builder.Services.AddCors();
 var app = builder.Build();
+app.UseCors(builder => builder.AllowAnyOrigin());
 
-// Применение CORS политики
-app.UseCors("AllowAll");
-
-List<Order> repo =
-[
-    new(1, 1, 1, 2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq"),
-    new(2, 1, 1, 2000, "eqwewtg", "wweqwe", "wqweq", "rasqw", "В ожидании", "assadfdwq"),
-    new(3, 1, 1, 2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq"),
-];
+List<Order> repo = new List<Order>
+{
+    new Order(1, 1, 1, 2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq"),
+    new Order(2, 1, 1, 2000, "eqwewtg", "wweqwe", "wqweq", "rasqw", "В ожидании", "assadfdwq"),
+    new Order(3, 1, 1, 2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq"),
+};
 
 app.MapGet("/", () => repo);
-app.MapPost("/", (Order o) => repo.Add(o));
+
+app.MapPost("/", (Order o) =>
+{
+    repo.Add(o);
+    return Results.Created($"/{o.Number}", o);
+});
+
 app.MapPut("/{number}", (int number, OrderUpdateDTO dto) =>
 {
     Order buffer = repo.Find(o => o.Number == number);
     if (buffer == null)
-        return Results.NotFound("No yet");
+        return Results.NotFound("Order not found");
+
     buffer.Status = dto.Status;
     buffer.Master = dto.Master;
     buffer.Description = dto.Description;
@@ -38,6 +32,7 @@ app.MapPut("/{number}", (int number, OrderUpdateDTO dto) =>
 
 app.Run();
 
+// DTO для обновления заказа
 class OrderUpdateDTO
 {
     public string Status { get; set; }
@@ -45,6 +40,7 @@ class OrderUpdateDTO
     public string Master { get; set; }
 }
 
+// Класс для представления заказа
 class Order
 {
     public int Number { get; set; }

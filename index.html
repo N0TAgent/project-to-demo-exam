@@ -42,14 +42,10 @@
 
         // Запрос для получения заявок
         async function GetOrders() {
-            try {
-                let response = await fetch("http://localhost:5130");
-                
-                // Проверка успешности ответа
-                if (!response.ok) {
-                    throw new Error(`Ошибка сети: ${response.statusText}`);
-                }
-
+            let response = await fetch("http://localhost:5130");
+            
+            // Если запрос успешен, продолжим добавление данных в таблицу
+            if (response.ok) {
                 let orders = await response.json();
 
                 // Добавление каждой заявки в таблицу
@@ -69,8 +65,6 @@
 
                     table.append(tr);
                 });
-            } catch (error) {
-                console.error("Ошибка при получении данных:", error);
             }
         }
 
