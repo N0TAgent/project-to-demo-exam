@@ -4,12 +4,15 @@ var app = builder.Build();
 
 List<Order>  repo = new()
 [
-    new(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании")
+    new(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq")
 ]; 
 
 app.MapGet("/", () => order);
-
 app.MapPost("/", (Order o) => repo.Add(o));
+app.MapPut("/{number}", (int number) =>
+{
+
+});
 
 app.Run();
 
@@ -25,8 +28,10 @@ class Order
     string description;
     string client;
     string status;
+    string master;
 
-    public Order(int number, int day, int month, int year, string device, string problemType, string description, string client, string status)
+
+    public Order(int number, int day, int month, int year, string device, string problemType, string description, string client, string status, string master)
     {
         Number = number;
         Day = day;
@@ -37,6 +42,7 @@ class Order
         Description = description;
         Client = client;
         Status = status;
+        Master = master;
     }
 
     public int Number { get => number; set => number = value; }
@@ -48,4 +54,5 @@ class Order
     public string Description { get => description; set => description = value; }
     public string Client { get => client; set => client = value; }
     public string Status { get => status; set => status = value; }
+    public string Master { get => master; set => master = value; }
 }
