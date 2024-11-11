@@ -1,9 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-Order order = new Order(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании")
 
-app.MapGet("/", () => "Hello");
+List<Order>  repo = new()
+[
+    new(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании")
+]; 
+
+app.MapGet("/", () => order);
+
+app.MapPost("/", (Order o) => repo.Add(o));
 
 app.Run();
 
