@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Номер Заявки</th>
+            <th>День</th>
+            <th>Месяц</th>
+            <th>Год</th>
+            <th>Девайс</th>
+            <th>Тип проблемы</th>
+            <th>Описание</th>
+            <th>Клиент</th>
+            <th>Статус</th>
+            <th>Мастер</th>
+        </tr>
+    </table>
+    <script>
+        let table = document.querySelector("table");
+
+        // Запрос для получения заявок
+        async function GetOrders() {
+            try {
+                let response = await fetch("http://localhost:5130");
+                
+                // Проверка успешности ответа
+                if (!response.ok) {
+                    throw new Error(`Ошибка сети: ${response.statusText}`);
+                }
+
+                let orders = await response.json();
+
+                // Добавление каждой заявки в таблицу
+                orders.forEach(o => {
+                    let tr = document.createElement("tr");
+
+                    tr.append(CreateTd(o.number));
+                    tr.append(CreateTd(o.day));
+                    tr.append(CreateTd(o.month));
+                    tr.append(CreateTd(o.year));
+                    tr.append(CreateTd(o.device));
+                    tr.append(CreateTd(o.problemType));
+                    tr.append(CreateTd(o.description));
+                    tr.append(CreateTd(o.client));
+                    tr.append(CreateTd(o.status));
+                    tr.append(CreateTd(o.master));
+
+                    table.append(tr);
+                });
+            } catch (error) {
+                console.error("Ошибка при получении данных:", error);
+            }
+        }
+
+        // Функция для создания ячейки
+        function CreateTd(data){
+            let td = document.createElement("td");
+            td.textContent = data;  // Используем textContent для текста
+            return td;
+        }
+
+        // Инициализация получения данных
+        GetOrders();
+    </script>
+</body>
+</html>
