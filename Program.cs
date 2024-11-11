@@ -1,6 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+Order order = new Order(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании")
+
 app.MapGet("/", () => "Hello");
 
 app.Run();
