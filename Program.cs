@@ -2,21 +2,36 @@ var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 
-List<Order>  repo = new()
+List<Order> repo =
 [
-    new(1,1,1,2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq")
-]; 
+    new(1, 1, 1, 2000, "ewtg", "weqwe", "weq", "rqw", "В ожидании", "asdwq"),
+];
 
-app.MapGet("/", () => order);
+app.MapGet("/", () => repo);
 app.MapPost("/", (Order o) => repo.Add(o));
-app.MapPut("/{number}", (int number) =>
+app.MapPut("/{number}", (int number, OrderUpdateDTO dto) =>
 {
-
+    Order buffer = repo.Find(o => o.Number == number);
+    if (buffer != null)
+        return Results.NotFound("No yet");
+    buffer.Status = dto.Status;
+    buffer.Master = dto.Master;
+    buffer.Description = dto.Description;
+    return Results.Json(buffer);
 });
 
 app.Run();
 
+class OrderUpdateDTO
+{
+    string status;
+    string description;
+    string master;
 
+    public string Status { get => status; set => status = value; }
+    public string Description { get => description; set => description = value; }
+    public string Master { get => master; set => master = value; }
+}
 class Order
 {
     int number;
@@ -29,7 +44,6 @@ class Order
     string client;
     string status;
     string master;
-
 
     public Order(int number, int day, int month, int year, string device, string problemType, string description, string client, string status, string master)
     {
